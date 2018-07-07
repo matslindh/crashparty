@@ -1,0 +1,25 @@
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+<div id="app">
+  {{ message }}
+</div>
+
+<script type="text/javascript">
+    var app = new Vue({
+      el: '#app',
+      data: {
+        message: 'Hello Vue!'
+      }
+    });
+
+    Vua.component('playerlist', {
+        template: '<table class="table table-striped"><tr><th>Rank</th><th>Player</th><th>Status</th></tr><playerrow v-for="player in players" v-bind:=""'
+    });
+
+    var source = new EventSource("{{ url_for('sse.stream') }}");
+    source.addEventListener('event', function(event) {
+        var data = JSON.parse(event.data);
+        console.log(data);
+        // do what you want with this data
+    }, false);
+</script>
