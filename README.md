@@ -41,7 +41,21 @@ manually with pip in your virtual environment to get a memorpy version that supp
 The current version also depend on flask_sse (and thus Redis) to push Server Sent Events to a web frontend that shows
 the current state of the game. This web frontend is not implemented except for outputting log data when an event occurs.
 
+You'll also need to install `flask` and `flask_sse` (the latter should automagically download the former).
+
+Web Frontend
+============
+
+Does not display any information yet. It only logs events it receives to the console.
+
+Start the flask frontend with:
+
+    set FLASK_APP=server.py
+    flask run
+
+.. assuming you have a virtualenv set up with flask in your path (which happens automagically if you've activated it).
+
 License
 =======
 
-The MIT License.
+The MIT License. See LICENSE.
