@@ -1,6 +1,9 @@
 import pprint
 import time
 
+import wmi
+import sys
+
 from memorpy import (
     MemWorker
 )
@@ -8,19 +11,31 @@ from memorpy import (
 from flask import Flask
 from flask_sse import sse
 
+
 # Publish events as Server Sent Events through Flask SSE. Remove this and change the publish_event
 # function to just a 'pass' for now if you don't want to use this.
 app = Flask(__name__)
 app.config["REDIS_URL"] = "redis://localhost"
 app.register_blueprint(sse, url_prefix='/stream')
 
-# Currently these values are hardcoded. pid = the process id of the Wreckfest server
-mw = MemWorker(pid=16016)
+# Detect pid of server executable
+c = wmi.WMI ()
+pid = None
+
+for process in c.Win32_Process(Name='Wreckfest.exe'):
+    if 'server' in process.ExecutablePath:
+        pid = process.ProcessId
+        break
+
+if not pid:
+    sys.stderr.write("Unable to find pid of 'Wreckfest.exe' in 'server' directory.\n")
+    sys.exit(-1)
+
+mw = MemWorker(pid=pid)
 
 # Memory address of the start of the scoring information. Can be found by using Cheat Engine to search for the
 # nick that joined the server first.
 address = mw.Address(0x1198602C)
-
 
 statuses = {
     0: 'DISCONNECTED',
