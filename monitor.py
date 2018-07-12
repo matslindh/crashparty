@@ -33,9 +33,29 @@ if not pid:
 
 mw = MemWorker(pid=pid)
 
+print("Attached myself to pid " + str(pid))
+
 # Memory address of the start of the scoring information. Can be found by using Cheat Engine to search for the
 # nick that joined the server first.
-address = mw.Address(0x1198602C)
+locations = mw.mem_search(b'\x60\x00\x84\x00\xA2\x00\x88\x00\x7D\x00\x93\x00\x29\x00\x32\x00\x48\x00\x40\x00\x44\x00\x52\x00\x2E\x00\x4E\x00\x5A\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00')
+address_to_use = None
+
+for location in locations:
+    possible_address = mw.Address(location.value)
+    possible_address += 40
+
+    data = possible_address.read(maxlen=1, type='bytes')
+
+    if 32 < data[0] < 125 or data[0] == 0:
+        address_to_use = location.value
+
+if not address_to_use:
+    sys.stderr.write("Could not find possible memory address for players\n")
+    sys.exit(-1)
+
+address = mw.Address(address_to_use)
+
+print("Using base address 0x" + format(address_to_use, 'x'))
 
 statuses = {
     0: 'DISCONNECTED',
