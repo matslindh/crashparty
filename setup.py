@@ -8,6 +8,7 @@ setup(
         'flask',
         'flask_sse',
         'memorpy',
+        'pypiwin32',
         'WMI',
     ],
 )
